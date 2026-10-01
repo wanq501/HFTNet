@@ -195,7 +195,7 @@ If you find our repo useful for your research, please cite us:
 
 ```
 
-}
+
 ```
 
 This project is based on the open source codebase [Ultralytics](https://github.com/ultralytics/ultralytics) and its RT-DETR implementation.
