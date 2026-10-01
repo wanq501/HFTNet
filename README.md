@@ -194,11 +194,7 @@ The repository is released in two stages.
 If you find our repo useful for your research, please cite us:
 
 ```
-@ARTICLE{HFTNet,
-  author={Wan, Qian and Feng, Li and Xiao, Zhiwen and Zhu, Zonghai and Xing, Huanlai and Tian, Yunong and Feng, Yurui and Wei, Zong},
-  title={HFTNet: Hierarchical Frequency Transformer Network for Small Drone Detection in Cluttered Scenes},
-  year={2026},
-  note={Under review}
+
 }
 ```
 
