@@ -34,7 +34,7 @@ HFTNet is an end-to-end Transformer detector for small drones in cluttered scene
       <th>$AP$</th>
       <th>$AP_{50}$</th>
       <th>$AP_{75}$</th>
-      <th>Weights</th>
+      <th>BaiduYun Download</th>
     </tr>
   </thead>
   <tbody align="center">
@@ -48,7 +48,7 @@ HFTNet is an end-to-end Transformer detector for small drones in cluttered scene
       <td>63.2</td>
       <td>93.8</td>
       <td>72.1</td>
-      <td><a href="https://github.com/wanq501/HFTNet/releases">ONNX</a></td>
+      <td><a href="https://pan.baidu.com/s/18nfLptxZhzr8ZCIDJaKtPw?pwd=xb7d">weight</a> (code: xb7d)</td>
     </tr>
     <tr>
       <td>HFTNet</td>
@@ -60,7 +60,7 @@ HFTNet is an end-to-end Transformer detector for small drones in cluttered scene
       <td>60.7</td>
       <td>95.3</td>
       <td>68.2</td>
-      <td><a href="https://github.com/wanq501/HFTNet/releases">ONNX</a></td>
+      <td><a href="https://pan.baidu.com/s/10eMmNa_mh-rbTMtwIKlvAw?pwd=krc3">weight</a> (code: krc3)</td>
     </tr>
   </tbody>
 </table>
@@ -72,8 +72,8 @@ HFTNet is an end-to-end Transformer detector for small drones in cluttered scene
 
 | Dataset | Description | Train / Val / Test |
 | :-- | :-- | :-: |
-| DUT-Plus | Extends [DUT Anti-UAV](https://github.com/wangdongdut/DUT-Anti-UAV) with multi-target scenes and birds as hard negatives, released with [DQEF-Net](https://github.com/wanq501/DQEF-Net) | 7,000 / 4,000 / 3,000 |
-| Det-Fly | Air-to-air images of micro-UAVs ([Zheng et al., IEEE RA-L 2021](https://doi.org/10.1109/LRA.2021.3056059), [dataset](https://github.com/Jake-WU/Det-Fly)), using the split of DQEF-Net | 7,962 / 2,654 / 2,654 |
+| DUT-Plus | Extends [DUT Anti-UAV](https://github.com/wangdongdut/DUT-Anti-UAV) with multi-target scenes and birds as hard negatives, available at [DUT-Plus](https://github.com/wanq501/DUT-Plus) | 7,000 / 4,000 / 3,000 |
+| Det-Fly | Air-to-air images of micro-UAVs ([Zheng et al., IEEE RA-L 2021](https://doi.org/10.1109/LRA.2021.3056059), [dataset](https://github.com/Jake-WU/Det-Fly)) | 7,962 / 2,654 / 2,654 |
 
 The split files used in the paper are provided in this repository.
 
@@ -128,7 +128,7 @@ The repository is released in two stages.
 
 | Component | Status |
 | :-- | :-- |
-| Model weights for DUT-Plus and Det-Fly (ONNX) | Available |
+| Model weights for DUT-Plus and Det-Fly (PyTorch .pt, via BaiduYun) | Available |
 | Evaluation, test, and detection scripts | Available |
 | TensorRT FP16 and INT8 export scripts, including INT8 calibration | Available |
 | Dataset splits of DUT-Plus and Det-Fly | Available |
