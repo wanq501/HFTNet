@@ -48,7 +48,7 @@ HFTNet is an end-to-end Transformer detector for small drones in cluttered scene
       <td>63.2</td>
       <td>93.8</td>
       <td>72.1</td>
-      <td><a href="https://pan.baidu.com/s/18nfLptxZhzr8ZCIDJaKtPw?pwd=xb7d">weight</a> (code: xb7d)</td>
+      <td><a href="https://pan.baidu.com/s/18nfLptxZhzr8ZCIDJaKtPw?>weight</a></td>
     </tr>
     <tr>
       <td>HFTNet</td>
@@ -60,7 +60,7 @@ HFTNet is an end-to-end Transformer detector for small drones in cluttered scene
       <td>60.7</td>
       <td>95.3</td>
       <td>68.2</td>
-      <td><a href="https://pan.baidu.com/s/10eMmNa_mh-rbTMtwIKlvAw?pwd=krc3">weight</a> (code: krc3)</td>
+      <td><a href="https://pan.baidu.com/s/10eMmNa_mh-rbTMtwIKlvAw?">weight</a></td>
     </tr>
   </tbody>
 </table>
