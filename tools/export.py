@@ -1,6 +1,9 @@
-"""Export HFTNet to ONNX (and optionally a TensorRT FP16 engine through the Ultralytics exporter).
+"""Export HFTNet to ONNX, a TensorRT FP16 engine, or a TensorRT INT8 engine with entropy calibration.
 Usage: python tools/export.py --weights best.pt --format onnx
        python tools/export.py --weights best.pt --format engine --half
+       python tools/export.py --weights best.pt --int8 --data path/to/data.yaml
+INT8 calibration uses --calib images (default 500) sampled evenly from the training split of --data, preprocessed
+exactly as at inference. TensorRT 8.x is required (pip install tensorrt==8.6.1).
 """
 import os as _os, sys as _sys
 
@@ -24,6 +27,8 @@ def _pin_gpus(argv):
 _pin_gpus(_sys.argv)
 import argparse, warnings
 warnings.filterwarnings('ignore')
+_ROOT = _os.path.dirname(_os.path.dirname(_os.path.abspath(__file__)))
+_sys.path.insert(0, _ROOT)
 from ultralytics import RTDETR
 
 
@@ -99,12 +104,28 @@ def main():
     ap.add_argument('--opset', type=int, default=None, help='default: highest supported by torch, capped at 17')
     ap.add_argument('--half', action='store_true')
     ap.add_argument('--device', default='0')
+    ap.add_argument('--int8', action='store_true', help='build a TensorRT INT8 engine with entropy calibration')
+    ap.add_argument('--data', default='', help='dataset yaml whose training split is used for INT8 calibration')
+    ap.add_argument('--calib', type=int, default=500, help='number of calibration images')
+    ap.add_argument('--workspace', type=int, default=4, help='TensorRT builder workspace in GB')
     a = ap.parse_args()
+    if a.int8 and not a.data:
+        ap.error('--int8 needs --data for the calibration images')
     try:
         opset = pick_opset(a.opset)
     except RuntimeError as err:
         raise SystemExit(f'ONNX export not possible: {err}')
     print('ONNX opset:', opset)
+    if a.int8:
+        from trt_utils import split_images, onnx_metadata, build_engine
+        onnx_path = str(RTDETR(a.weights).export(format='onnx', imgsz=a.imgsz, opset=opset, half=False, simplify=True,
+                                                 dynamic=False, device=a.device))
+        train = split_images(a.data, 'train'); step = max(1, len(train) // a.calib)
+        engine = _os.path.splitext(a.weights)[0] + '_int8.engine'
+        ver, sec = build_engine(onnx_path, engine, 'int8', onnx_metadata(onnx_path, a.weights, a.imgsz), a.workspace,
+                                train[::step][:a.calib], _os.path.splitext(a.weights)[0] + '_int8.cache', a.imgsz)
+        print(f'exported: {engine} (TensorRT {ver}, INT8, built in {sec:.0f} s)')
+        return
     path = RTDETR(a.weights).export(format=a.format, imgsz=a.imgsz, opset=opset, half=a.half, simplify=True,
                                     dynamic=False, device=a.device)
     print('exported:', path)
