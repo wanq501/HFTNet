@@ -19,52 +19,7 @@ HFTNet adds four components to RT-DETR-R18:
 | **BDFN** | Bidirectional dynamic fusion network: DySample up-sampling, learnable weighted fusion and a DFAL at every fusion node. DFAL aggregates the node input through two cascaded DFCS stages and refines it with a deformable feature bottleneck (DFBN, DCNv3 sampling) | `ultralytics/nn/Addmodules/Dysample.py`, `BiFPN.py`, `BDFN.py` (`DFAL2`, `DFBN`, `DCNv3`) |
 | **SOIoU** | Box regression loss that combines the overlap of inner boxes with corner-distance penalties normalised by the image diagonal. The inner-box IoU is also the quality target of query selection | `ultralytics/utils/metrics.py` (`soiou`, `inner_iou`), used in `ultralytics/models/utils/loss.py` |
 
-<<<<<<< HEAD
 For a predicted box and its matched ground-truth box,
-=======
-<table>
-  <thead align="center">
-    <tr>
-      <th>Model</th>
-      <th>Dataset</th>
-      <th>Resolution</th>
-      <th>Epochs</th>
-      <th>Params (M)</th>
-      <th>FLOPs (G)</th>
-      <th>$AP$</th>
-      <th>$AP_{50}$</th>
-      <th>$AP_{75}$</th>
-      <th>BaiduYun Download</th>
-    </tr>
-  </thead>
-  <tbody align="center">
-    <tr>
-      <td>HFTNet</td>
-      <td>DUT-Plus</td>
-      <td>640</td>
-      <td>200</td>
-      <td>21.8</td>
-      <td>63.6</td>
-      <td>63.2</td>
-      <td>93.8</td>
-      <td>72.1</td>
-      <td><a href="https://pan.baidu.com/s/18nfLptxZhzr8ZCIDJaKtPw?>weight</a></td>
-    </tr>
-    <tr>
-      <td>HFTNet</td>
-      <td>Det-Fly</td>
-      <td>640</td>
-      <td>200</td>
-      <td>21.8</td>
-      <td>63.6</td>
-      <td>60.7</td>
-      <td>95.3</td>
-      <td>68.2</td>
-      <td><a href="https://pan.baidu.com/s/10eMmNa_mh-rbTMtwIKlvAw?">weight</a></td>
-    </tr>
-  </tbody>
-</table>
->>>>>>> 12006491e0b04c55311e0ad3b7e72075749793ce
 
 $$\mathcal{L}_{\mathrm{SOIoU}} = 1-\mathrm{IoU}^{\mathrm{inner}}+\frac{d_1^{2}+d_2^{2}}{W^{2}+H^{2}},$$
 
