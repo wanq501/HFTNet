@@ -195,34 +195,7 @@ This project is based on the open source codebase [Ultralytics](https://github.c
   url={https://github.com/ultralytics/ultralytics}
 }
 
-@inproceedings{YOLOv9,
-  author={Wang, Chien-Yao and Yeh, I-Hau and Liao, Hong-Yuan Mark},
-  title={YOLOv9: Learning What You Want to Learn Using Programmable Gradient Information},
-  booktitle={Proceedings of the European Conference on Computer Vision},
-  year={2024}
-}
 
-@inproceedings{Swin,
-  author={Liu, Ze and Lin, Yutong and Cao, Yue and Hu, Han and Wei, Yixuan and Zhang, Zheng and Lin, Stephen and Guo, Baining},
-  title={Swin Transformer: Hierarchical Vision Transformer using Shifted Windows},
-  booktitle={Proceedings of the IEEE/CVF International Conference on Computer Vision},
-  pages={10012--10022},
-  year={2021}
-}
 
-@inproceedings{DCNv3,
-  author={Wang, Wenhai and Dai, Jifeng and Chen, Zhe and Huang, Zhenhang and Li, Zhiqi and Zhu, Xizhou and Hu, Xiaowei and Lu, Tong and Lu, Lewei and Li, Hongsheng and Wang, Xiaogang and Qiao, Yu},
-  title={InternImage: Exploring Large-Scale Vision Foundation Models with Deformable Convolutions},
-  booktitle={Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition},
-  pages={14408--14419},
-  year={2023}
-}
 
-@inproceedings{DySample,
-  author={Liu, Wenze and Lu, Hao and Fu, Hongtao and Cao, Zhiguo},
-  title={Learning to Upsample by Learning to Sample},
-  booktitle={Proceedings of the IEEE/CVF International Conference on Computer Vision},
-  pages={6027--6037},
-  year={2023}
-}
 ```
