@@ -184,18 +184,4 @@ This project is based on the open source codebase [Ultralytics](https://github.c
   pages={16965--16974},
   year={2024}
 }
-
-@misc{YOLOv8,
-  author={Glenn Jocher and Ayush Chaurasia and Jing Qiu},
-  title={YOLOv8 by Ultralytics},
-  version={8.0.0},
-  year={2023},
-  month={jan},
-  license={AGPL-3.0},
-  url={https://github.com/ultralytics/ultralytics}
-}
-
-
-
-
 ```
