@@ -174,7 +174,7 @@ If you find our repo useful for your research, please cite us:
 
 ```
 
-This project is based on the open source codebase [Ultralytics](https://github.com/ultralytics/ultralytics) and its RT-DETR implementation. The aggregation block of DFAL adopts RepNCSPELAN4 from YOLOv9, the window attention of DIFI follows Swin Transformer, the deformable convolution is DCNv3, and the upsampling operator is DySample.
+This project is based on the open source codebase [Ultralytics](https://github.com/ultralytics/ultralytics) and its RT-DETR implementation.
 
 ```
 @inproceedings{RT-DETR,
