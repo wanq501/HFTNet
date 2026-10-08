@@ -9,7 +9,11 @@
 
 </div>
 </h1>
+<<<<<<< HEAD
 <img src="assets/overview.jpg" width="1500">
+=======
+<img src="Assets/fig1.jpg" width="1500">
+>>>>>>> cfaf1e79133fe086d0fb252cb39ff803ba1137cf
 
 ## Model Zoo 
 
@@ -198,6 +202,7 @@ This project is based on the open source codebase [Ultralytics](https://github.c
   license={AGPL-3.0},
   url={https://github.com/ultralytics/ultralytics}
 }
+<<<<<<< HEAD
 
 @inproceedings{YOLOv9,
   author={Wang, Chien-Yao and Yeh, I-Hau and Liao, Hong-Yuan Mark},
@@ -229,4 +234,6 @@ This project is based on the open source codebase [Ultralytics](https://github.c
   pages={6027--6037},
   year={2023}
 }
+=======
+>>>>>>> cfaf1e79133fe086d0fb252cb39ff803ba1137cf
 ```
