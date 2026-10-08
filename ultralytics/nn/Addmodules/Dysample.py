@@ -81,9 +81,3 @@ class Dy_Sample(nn.Module):
         if self.style == 'pl':
             return self.forward_pl(x)
         return self.forward_lp(x)
-
-
-if __name__ == '__main__':
-    x = torch.rand(2, 64, 4, 7)
-    dys = Dy_Sample(64)
-    print(dys(x).shape)

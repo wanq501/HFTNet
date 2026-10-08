@@ -4,7 +4,7 @@ import torch
 import torch.nn as nn
 import numpy as np
 
-__all__ = ['RepNCSPELAN4', 'RepNCSPELAN4_high']
+__all__ = ['RepNCSPELAN4']
 
 
 class RepConvN(nn.Module):
@@ -182,38 +182,3 @@ class RepNCSPELAN4(nn.Module):
         y = list(self.cv1(x).split((self.c, self.c), 1))
         y.extend(m(y[-1]) for m in [self.cv2, self.cv3])
         return self.cv4(torch.cat(y, 1))
-
-
-class RepNCSPELAN4_high(nn.Module):
-    # csp-elan
-    def __init__(self, c1, c2, c5=1):  # c5 = repeat
-        super().__init__()
-        c3 = c2
-        c4 = int(c3 / 2)
-        self.c = c3 // 2
-        self.cv1 = Conv(c1, c3, 1, 1)
-        self.cv2 = nn.Sequential(RepNCSP(c3 // 2, c4, c5), Conv(c4, c4, 3, 1))
-        self.cv3 = nn.Sequential(RepNCSP(c4, c4, c5), Conv(c4, c4, 3, 1))
-        self.cv4 = Conv(c3 + (2 * c4), c2, 1, 1)
-
-    def forward(self, x):
-        y = list(self.cv1(x).chunk(2, 1))
-        y.extend((m(y[-1])) for m in [self.cv2, self.cv3])
-        return self.cv4(torch.cat(y, 1))
-
-    def forward_split(self, x):
-        y = list(self.cv1(x).split((self.c, self.c), 1))
-        y.extend(m(y[-1]) for m in [self.cv2, self.cv3])
-        return self.cv4(torch.cat(y, 1))
-
-
-if __name__ == "__main__":
-    # Generating Sample image
-    image_size = (1, 24, 224, 224)
-    image = torch.rand(*image_size)
-
-    # Model
-    mobilenet_v1 = RepNCSPELAN4(24, 24, 128, 64, 1)
-
-    out = mobilenet_v1(image)
-    print(out.size())

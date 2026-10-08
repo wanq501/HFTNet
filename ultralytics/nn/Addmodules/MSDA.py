@@ -1,10 +1,9 @@
 # Multi-scale dilated attention (MSDA) of DilateFormer (Jiao et al., IEEE TMM 2023),
 # adapted from https://github.com/JIAOJIAYUASD/dilateformer.
-from collections import OrderedDict
 import torch.nn as nn
 import torch.nn.functional as F
 
-__all__ = ['MultiDilatelocalAttention', 'BasicBlock_MSDA', 'BottleNeck_MSDA']
+__all__ = ['MultiDilatelocalAttention', 'BasicBlock_MSDA']
 
 
 class DilateAttention(nn.Module):
@@ -72,7 +71,6 @@ class MultiDilatelocalAttention(nn.Module):
         return y4
 
 
-
 class ConvNormLayer(nn.Module):
     def __init__(self,
                  ch_in,
@@ -99,7 +97,6 @@ class ConvNormLayer(nn.Module):
         if self.act:
             out = getattr(F, self.act)(out)
         return out
-
 
 
 class BasicBlock_MSDA(nn.Module):
@@ -170,61 +167,3 @@ class BasicBlock_MSDA(nn.Module):
         out = F.relu(out)
 
         return out
-
-
-class BottleNeck_MSDA(nn.Module):
-    expansion = 4
-
-    def __init__(self, ch_in, ch_out, stride, shortcut, act='relu', variant='d', att=False):
-        super().__init__()
-
-        if variant == 'a':
-            stride1, stride2 = stride, 1
-        else:
-            stride1, stride2 = 1, stride
-
-        width = ch_out
-
-        self.branch2a = ConvNormLayer(ch_in, width, 1, stride1, act=act)
-        self.branch2b = ConvNormLayer(width, width, 3, stride2, act=act)
-        self.branch2c = ConvNormLayer(width, ch_out * self.expansion, 1, 1)
-
-        self.shortcut = shortcut
-        if not shortcut:
-            if variant == 'd' and stride == 2:
-                self.short = nn.Sequential(OrderedDict([
-                    ('pool', nn.AvgPool2d(2, 2, 0, ceil_mode=True)),
-                    ('conv', ConvNormLayer(ch_in, ch_out * self.expansion, 1, 1))
-                ]))
-            else:
-                self.short = ConvNormLayer(ch_in, ch_out * self.expansion, 1, stride)
-
-        self.att = att
-        if self.att:
-            self.se = MultiDilatelocalAttention(ch_out * 4)
-
-    def forward(self, x):
-        out = self.branch2a(x)
-        out = self.branch2b(out)
-        out = self.branch2c(out)
-
-        if self.att:
-            out = self.se(out)
-
-        if self.shortcut:
-            short = x
-        else:
-            short = self.short(x)
-
-        out = out + short
-        out = F.relu(out)
-
-        return out
-
-
-
-
-
-
-
-

@@ -2,7 +2,6 @@
 #   Agg(X)  = DFBN(W2 Concat(Za, Zb, Zc, Zd)), [Za, Zb] = Split(W1 X), Zc = W3 CSP(Zb), Zd = W4 CSP(Zc)
 #   DFBN(Z) = Z + W8 DCN(Z), with the batch-normalization scale of W8 initialized to zero
 # The split, the two CSP stages and the concatenation are the RepNCSPELAN4 block of YOLOv9.
-# DFAL and DFCS implement the earlier design and are kept for comparison.
 # The pure-PyTorch DCNv3 follows InternImage (Wang et al., CVPR 2023), https://github.com/OpenGVLab/InternImage.
 #   DFBN(Z) = Z + W6 DCN(Z)
 # DCN is DCNv3 (Wang et al., 2023): grouped sampling with learned offsets and softmax-normalized
@@ -15,7 +14,7 @@ import torch.utils.checkpoint as cp
 from ultralytics.nn.modules.conv import Conv
 from ultralytics.nn.Addmodules.RepNCSPELAN4 import RepNCSPELAN4
 
-__all__ = ['DCNv3', 'DFBN', 'DFCS', 'DFAL', 'SPDConv', 'DFAL2']
+__all__ = ['DCNv3', 'DFBN', 'DFAL2']
 
 
 class LayerNorm2d(nn.Module):
@@ -90,56 +89,6 @@ class DFBN(nn.Module):
 
     def forward(self, z):
         return z + self.w6(self.dcn(z))
-
-
-class DFCS(nn.Module):
-    """Deformable feature cross-stage: DFCS(Z) = W5 Concat(W3 Z, DFBN(W4 Z))."""
-
-    def __init__(self, c1, c2, n=1, e=0.5, k=1, zero_init=False):
-        super().__init__()
-        c_ = int(c2 * e)                         # hidden width (e = 0.5 halves it, e = 1.0 keeps it)
-        self.w3 = Conv(c1, c_, 1)
-        self.w4 = Conv(c1, c_, 1)
-        self.m = nn.Sequential(*(DFBN(c_, k=k, zero_init=zero_init) for _ in range(n)))
-        self.w5 = Conv(2 * c_, c2, k)              # k = 1 or 3
-
-    def forward(self, z):
-        return self.w5(torch.cat((self.w3(z), self.m(self.w4(z))), dim=1))
-
-
-class DFAL(nn.Module):
-    """Deformable feature aggregation layer of the earlier design (DFCS stages with DFBN inside). HFTNet uses DFAL2."""
-
-    def __init__(self, c1, c2, n=1, e=0.5, k=1, zero_init=False):
-        """e: hidden-width ratio inside each DFCS; k: kernel size of W5 and W6; zero_init: start every DFBN as the
-        identity. The defaults (0.5, 1, False) give the compact variant."""
-        super().__init__()
-        c3 = c2 // 2
-        self.c = c3 // 2
-        self.w1 = Conv(c1, c3, 1)
-        self.dfcs1 = DFCS(self.c, self.c, n, e, k, zero_init)
-        self.dfcs2 = DFCS(self.c, self.c, n, e, k, zero_init)
-        self.w2 = Conv(3 * self.c, c2, 1)
-
-    def forward(self, x):
-        za, zb = self.w1(x).chunk(2, dim=1)
-        zc = self.dfcs1(zb)
-        zd = self.dfcs2(zc)
-        return self.w2(torch.cat((za, zc, zd), dim=1))
-
-
-class SPDConv(nn.Module):
-    """Space-to-depth downsampling for the bottom-up path: the four pixels of every 2x2 cell are moved to the
-    channel axis before a stride-1 convolution, so no pixel is discarded when the resolution is halved."""
-
-    def __init__(self, c1, c2, k=3):
-        super().__init__()
-        self.conv = Conv(4 * c1, c2, k, 1)
-
-    def forward(self, x):
-        if x.shape[-2] % 2 or x.shape[-1] % 2:
-            x = F.pad(x, (0, x.shape[-1] % 2, 0, x.shape[-2] % 2))
-        return self.conv(torch.cat((x[..., ::2, ::2], x[..., 1::2, ::2], x[..., ::2, 1::2], x[..., 1::2, 1::2]), 1))
 
 
 class DFAL2(nn.Module):

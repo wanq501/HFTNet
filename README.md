@@ -9,7 +9,7 @@
 
 </div>
 </h1>
-<img src="Assets/fig1.jpg" width="1500">
+<img src="assets/fig1.jpg" width="1500">
 
 ## Model Zoo 
 
@@ -170,11 +170,15 @@ All components are available.
 If you find our repo useful for your research, please cite us:
 
 ```
-
+@ARTICLE{HFTNet,
+  author={Wan, Qian and Feng, Li and Xiao, Zhiwen and Zhu, Zonghai and Xing, Huanlai and Tian, Yunong and Feng, Yurui and Wei, Zong},
+  title={HFTNet: Hierarchical Frequency Transformer Network for Small Drone Detection in Cluttered Scenes}, 
+  year={2026},
+  note={Under review}}
 
 ```
 
-This project is based on the open source codebase [Ultralytics](https://github.com/ultralytics/ultralytics) and its RT-DETR implementation.
+This project is based on the open source codebase [Ultralytics](https://github.com/ultralytics/ultralytics) and its RT-DETR implementation. The multi-scale dilated attention of HFEN follows DilateFormer, the window attention of DIFI follows Swin Transformer, the weighted fusion of BDFN follows BiFPN, the aggregation block of DFAL adopts RepNCSPELAN4 from YOLOv9, the deformable convolution is DCNv3, and the upsampling operator is DySample.
 
 ```
 @inproceedings{RT-DETR,
@@ -183,5 +187,61 @@ This project is based on the open source codebase [Ultralytics](https://github.c
   booktitle={Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition},
   pages={16965--16974},
   year={2024}
+}
+
+@misc{YOLOv8,
+  author={Glenn Jocher and Ayush Chaurasia and Jing Qiu},
+  title={YOLOv8 by Ultralytics},
+  version={8.0.0},
+  year={2023},
+  month={jan},
+  license={AGPL-3.0},
+  url={https://github.com/ultralytics/ultralytics}
+}
+
+@inproceedings{YOLOv9,
+  author={Wang, Chien-Yao and Yeh, I-Hau and Liao, Hong-Yuan Mark},
+  title={YOLOv9: Learning What You Want to Learn Using Programmable Gradient Information},
+  booktitle={Proceedings of the European Conference on Computer Vision},
+  year={2024}
+}
+
+@article{DilateFormer,
+  author={Jiao, Jiayu and Tang, Yu-Ming and Lin, Kun-Yu and Gao, Yipeng and Ma, Jinhua and Wang, Yaowei and Zheng, Wei-Shi},
+  title={DilateFormer: Multi-Scale Dilated Transformer for Visual Recognition},
+  journal={IEEE Transactions on Multimedia},
+  year={2023}
+}
+
+@inproceedings{EfficientDet,
+  author={Tan, Mingxing and Pang, Ruoming and Le, Quoc V.},
+  title={EfficientDet: Scalable and Efficient Object Detection},
+  booktitle={Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition},
+  pages={10781--10790},
+  year={2020}
+}
+
+@inproceedings{Swin,
+  author={Liu, Ze and Lin, Yutong and Cao, Yue and Hu, Han and Wei, Yixuan and Zhang, Zheng and Lin, Stephen and Guo, Baining},
+  title={Swin Transformer: Hierarchical Vision Transformer using Shifted Windows},
+  booktitle={Proceedings of the IEEE/CVF International Conference on Computer Vision},
+  pages={10012--10022},
+  year={2021}
+}
+
+@inproceedings{DCNv3,
+  author={Wang, Wenhai and Dai, Jifeng and Chen, Zhe and Huang, Zhenhang and Li, Zhiqi and Zhu, Xizhou and Hu, Xiaowei and Lu, Tong and Lu, Lewei and Li, Hongsheng and Wang, Xiaogang and Qiao, Yu},
+  title={InternImage: Exploring Large-Scale Vision Foundation Models with Deformable Convolutions},
+  booktitle={Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition},
+  pages={14408--14419},
+  year={2023}
+}
+
+@inproceedings{DySample,
+  author={Liu, Wenze and Lu, Hao and Fu, Hongtao and Cao, Zhiguo},
+  title={Learning to Upsample by Learning to Sample},
+  booktitle={Proceedings of the IEEE/CVF International Conference on Computer Vision},
+  pages={6027--6037},
+  year={2023}
 }
 ```

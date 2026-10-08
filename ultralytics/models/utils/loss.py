@@ -109,7 +109,7 @@ class DETRLoss(nn.Module):
         if BOX_LOSS == 'soiou':
             loss[name_giou] = 1.0 - soiou(pred_bboxes, gt_bboxes, xywh=True, ratio=SOIOU_RATIO)   # SOIoU (Section 3.5)
         elif BOX_LOSS == 'mpdiou':
-            loss[name_giou] = 1.0 - bbox_iou(pred_bboxes, gt_bboxes, xywh=True, mpdiou=True, Inner=False, ratio=SOIOU_RATIO)
+            loss[name_giou] = 1.0 - soiou(pred_bboxes, gt_bboxes, xywh=True, ratio=1.0)   # MPDIoU, the r = 1 case of SOIoU
         else:
             loss[name_giou] = 1.0 - bbox_iou(pred_bboxes, gt_bboxes, xywh=True, GIoU=True)   # RT-DETR
 

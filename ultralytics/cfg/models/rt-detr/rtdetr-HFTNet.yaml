@@ -1,6 +1,6 @@
 # HFTNet: DIFI with gated window attention (AIFI_DF) and DFAL aggregation nodes (DFAL2, RepNCSPELAN4 followed by a zero-initialized DFBN); train with --box-loss soiou --qs-target inner
 # Ultralytics YOLO 🚀, AGPL-3.0 license
-# RT-DETR-l object detection model with P3-P5 outputs. For details see https://docs.ultralytics.com/models/rtdetr
+# HFTNet object detection model with P3-P5 outputs and the RT-DETR decoder
  
 # Parameters
 nc: 80  # number of classes
