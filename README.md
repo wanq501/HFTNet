@@ -9,11 +9,7 @@
 
 </div>
 </h1>
-<<<<<<< HEAD
-<img src="assets/overview.jpg" width="1500">
-=======
-<img src="Assets/fig1.jpg" width="1500">
->>>>>>> cfaf1e79133fe086d0fb252cb39ff803ba1137cf
+<img src="assets/fig1.jpg" width="1500">
 
 ## Model Zoo 
 
@@ -60,7 +56,7 @@
   </tbody>
 </table>
 
-- Results of the mAP are evaluated on the DUT-Plus dataset (an augmented version of the [DUT-Anti-UAV](https://github.com/wangdongdut/DUT-Anti-UAV) dataset, available at [DUT-Plus](https://github.com/wanq501/DUT-Plus)) and on the [Det-Fly](https://github.com/Jake-WU/Det-Fly) dataset with an input resolution of 640×640.
+- Results of the mAP are evaluated on the DUT-Plus dataset (an augmented version of the [DUT-Anti-UAV](https://github.com/wangdongdut/DUT-Anti-UAV) dataset, available at [DUT-Plus](https://github.com/wanq501/DUT-Plus)) and on the [Det-Fly](https://github.com/Jake-WU/Det-Fly) dataset with an input resolution of 640x640.
 - All models are trained from scratch without using pretrained weights.
 
 ## Deployment
@@ -202,7 +198,6 @@ This project is based on the open source codebase [Ultralytics](https://github.c
   license={AGPL-3.0},
   url={https://github.com/ultralytics/ultralytics}
 }
-<<<<<<< HEAD
 
 @inproceedings{YOLOv9,
   author={Wang, Chien-Yao and Yeh, I-Hau and Liao, Hong-Yuan Mark},
@@ -234,6 +229,4 @@ This project is based on the open source codebase [Ultralytics](https://github.c
   pages={6027--6037},
   year={2023}
 }
-=======
->>>>>>> cfaf1e79133fe086d0fb252cb39ff803ba1137cf
 ```
