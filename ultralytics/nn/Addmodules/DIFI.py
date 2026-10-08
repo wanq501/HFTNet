@@ -1,7 +1,7 @@
-# DIFI: dual-frequency intra-scale feature interaction (HFTNet, Section 3.3).
-# The RT-DETR post-normalization encoder layer is kept and its multi-head self-attention is
-# replaced by HiLo attention (Pan et al., 2022): Hi-Fi heads attend inside 2x2 windows and
-# Lo-Fi heads attend to 2x2 average-pooled keys and values (Eqs. 7-9).
+# DIFI: dual-frequency intra-scale feature interaction (HFTNet, Section 3.3), implemented by AIFI_DF.
+# The RT-DETR post-normalization encoder layer is kept. Its multi-head self-attention carries the low-frequency
+# context, and a parallel 2x2 window-attention branch scaled by a zero-initialized channel-wise gate carries the
+# high-frequency detail (Eqs. 6-7). HiLo and AIFI_HiLo are kept for comparison with the earlier design.
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -11,7 +11,8 @@ __all__ = ['HiLo', 'AIFI_HiLo', 'WindowAttention', 'AIFI_DF']
 
 
 class HiLo(nn.Module):
-    """HiLo attention. Input tokens (B, N, C) with N = H * W; output (B, N, C)."""
+    """HiLo attention of LITv2 (Pan et al., NeurIPS 2022, https://github.com/ziplab/LITv2).
+    Input tokens (B, N, C) with N = H * W; output (B, N, C)."""
 
     def __init__(self, dim, num_heads=8, window_size=2, alpha=0.5, lo_pool=None, qkv_bias=False):
         super().__init__()

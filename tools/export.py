@@ -1,9 +1,12 @@
-"""Export HFTNet to ONNX, a TensorRT FP16 engine, or a TensorRT INT8 engine with entropy calibration.
+"""Export HFTNet to ONNX or build a TensorRT engine.
 Usage: python tools/export.py --weights best.pt --format onnx
-       python tools/export.py --weights best.pt --format engine --half
-       python tools/export.py --weights best.pt --int8 --data path/to/data.yaml
-INT8 calibration uses --calib images (default 500) sampled evenly from the training split of --data, preprocessed
-exactly as at inference. TensorRT 8.x is required (pip install tensorrt==8.6.1).
+       python tools/export.py --weights best.pt --format engine --half       TensorRT FP16, the deployment setting of the paper
+       python tools/export.py --weights model.onnx --format engine --half    the same, from an exported ONNX file
+       python tools/export.py --weights best.pt --int8 --data data.yaml      optional INT8 with entropy calibration
+Engines are built with the TensorRT Python API and named <weights>_<precision>.engine. Following standard
+mixed-precision practice, FP16 and INT8 engines keep the layer normalization layers in FP32 (--keep-fp32, default
+NORMALIZATION), so the FP16 engine retains the full-precision mAP. INT8 calibration uses --calib images (default 500)
+sampled evenly from the training split of --data. TensorRT 8.x is required (pip install tensorrt==8.6.1).
 """
 import os as _os, sys as _sys
 
@@ -108,27 +111,37 @@ def main():
     ap.add_argument('--data', default='', help='dataset yaml whose training split is used for INT8 calibration')
     ap.add_argument('--calib', type=int, default=500, help='number of calibration images')
     ap.add_argument('--workspace', type=int, default=4, help='TensorRT builder workspace in GB')
+    ap.add_argument('--keep-fp32', default='NORMALIZATION', help='TensorRT layer types kept in FP32 in FP16/INT8 engines; empty for none')
     a = ap.parse_args()
     if a.int8 and not a.data:
         ap.error('--int8 needs --data for the calibration images')
-    try:
-        opset = pick_opset(a.opset)
-    except RuntimeError as err:
-        raise SystemExit(f'ONNX export not possible: {err}')
-    print('ONNX opset:', opset)
-    if a.int8:
-        from trt_utils import split_images, onnx_metadata, build_engine
+    is_onnx = a.weights.lower().endswith('.onnx')
+    if a.format == 'onnx' and not a.int8 and is_onnx:
+        ap.error('--weights is already an ONNX file')
+    onnx_path = a.weights
+    if not is_onnx:
+        try:
+            opset = pick_opset(a.opset)
+        except RuntimeError as err:
+            raise SystemExit(f'ONNX export not possible: {err}')
+        print('ONNX opset:', opset)
         onnx_path = str(RTDETR(a.weights).export(format='onnx', imgsz=a.imgsz, opset=opset, half=False, simplify=True,
                                                  dynamic=False, device=a.device))
+        if a.format == 'onnx' and not a.int8:
+            print('exported:', onnx_path)
+            return
+    from trt_utils import split_images, onnx_metadata, build_engine
+    precision = 'int8' if a.int8 else ('fp16' if a.half else 'fp32')
+    stem = _os.path.splitext(a.weights)[0]
+    engine = f'{stem}_{precision}.engine'
+    calib, cache = [], None
+    if a.int8:
         train = split_images(a.data, 'train'); step = max(1, len(train) // a.calib)
-        engine = _os.path.splitext(a.weights)[0] + '_int8.engine'
-        ver, sec = build_engine(onnx_path, engine, 'int8', onnx_metadata(onnx_path, a.weights, a.imgsz), a.workspace,
-                                train[::step][:a.calib], _os.path.splitext(a.weights)[0] + '_int8.cache', a.imgsz)
-        print(f'exported: {engine} (TensorRT {ver}, INT8, built in {sec:.0f} s)')
-        return
-    path = RTDETR(a.weights).export(format=a.format, imgsz=a.imgsz, opset=opset, half=a.half, simplify=True,
-                                    dynamic=False, device=a.device)
-    print('exported:', path)
+        calib, cache = train[::step][:a.calib], stem + '_int8.cache'
+    keep = [t for t in a.keep_fp32.split(',') if t.strip()]
+    ver, sec = build_engine(onnx_path, engine, precision, onnx_metadata(onnx_path, a.weights, a.imgsz), a.workspace,
+                            calib, cache, a.imgsz, fp32_types=keep)
+    print(f'exported: {engine} (TensorRT {ver}, {precision.upper()}, built in {sec:.0f} s)')
 
 
 if __name__ == '__main__':

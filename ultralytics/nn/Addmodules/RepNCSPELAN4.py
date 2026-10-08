@@ -1,3 +1,5 @@
+# RepNCSPELAN4, RepNCSP, RepNBottleneck and RepConvN follow YOLOv9 (Wang et al., ECCV 2024),
+# https://github.com/WongKinYiu/yolov9 (GPL-3.0).
 import torch
 import torch.nn as nn
 import numpy as np

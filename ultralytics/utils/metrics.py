@@ -1473,7 +1473,7 @@ class OBBMetrics(SimpleClass):
 
 
 def inner_iou(box1, box2, xywh=True, ratio=0.75, eps=1e-7):
-    """Inner-IoU (HFTNet Eqs. 22-24): overlap of the two boxes shrunk about their centers by `ratio`."""
+    """Inner-IoU (HFTNet Eqs. 20-22): overlap of the two boxes shrunk about their centers by `ratio`."""
     if not xywh:
         box1, box2 = xyxy2xywh(box1), xyxy2xywh(box2)
     (x1, y1, w1, h1), (x2, y2, w2, h2) = box1.chunk(4, -1), box2.chunk(4, -1)
@@ -1486,8 +1486,8 @@ def inner_iou(box1, box2, xywh=True, ratio=0.75, eps=1e-7):
 
 
 def soiou(box1, box2, xywh=True, ratio=0.75, img_w=1.0, img_h=1.0, eps=1e-7):
-    """SOIoU score (HFTNet Eq. 25): IoU_inner - (dist1^2 + dist2^2) / (W^2 + H^2). The loss is 1 - soiou.
-    dist1 / dist2 are the squared distances between the top-left / bottom-right corners (Eqs. 18-19).
+    """SOIoU score (HFTNet Eq. 23): IoU_inner - (dist1^2 + dist2^2) / (W^2 + H^2). The loss is 1 - soiou.
+    dist1 / dist2 are the squared distances between the top-left / bottom-right corners (Eqs. 14-15).
     Boxes may be normalized (img_w = img_h = 1, the default) or in pixels with the image size given."""
     if xywh:
         (x1, y1, w1, h1), (x2, y2, w2, h2) = box1.chunk(4, -1), box2.chunk(4, -1)

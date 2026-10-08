@@ -1,19 +1,9 @@
+# ResNet stem, BasicBlock, BottleNeck and Blocks follow the ResNet backbone of RT-DETR (Zhao et al., CVPR 2024).
+# Blocks resolves its block type by name, e.g. BasicBlock_MSDA of HFEN imported from MSDA.
 from collections import OrderedDict
 import torch.nn as nn
 import torch.nn.functional as F
-from .MSBlock import *
-from .SENetV2 import *
-from .ContextGuided import *
-from .DiverseBranchBlock import *
-from .FasterBlock import *
-from .EMAttention import *
 from .MSDA import *
-from .AcMix import *
-from .DLKAttention import *
-from .LSKAttention import *
-from .TripletAttention import *
-from .DAttention import *
-from .Biformer import *
 
 class ConvNormLayer(nn.Module):
     def __init__(self,

@@ -725,8 +725,7 @@ def parse_model(d, ch, verbose=True):  # model_dict, input_channels(3)
         n = n_ = max(round(n * depth), 1) if n > 1 else n  # depth gain
         if m in (Classify, Conv, ConvTranspose, GhostConv, Bottleneck, GhostBottleneck, SPP, SPPF, DWConv, Focus,
                  BottleneckCSP, C1, C2, C2f, C3, C3TR, C3Ghost, nn.ConvTranspose2d, DWConvTranspose2d, C3x, RepC3,
-                 Blocks, ConvNormLayer, VoVGSCSP, GSConv, nn.Conv2d, CSPStage, DiverseBranchBlock,
-                 RepNCSPELAN4, RepNCSPELAN4_high, ADown, DFAL, SPDConv, DFAL2):
+                 Blocks, ConvNormLayer, nn.Conv2d, RepNCSPELAN4, RepNCSPELAN4_high, DFAL, SPDConv, DFAL2):
             c1, c2 = ch[f], args[0]
             if c2 != nc:  # if c2 not equal to number of classes (i.e. for Classify() output)
                 c2 = make_divisible(min(c2, max_channels) * width, 8)
@@ -740,50 +739,14 @@ def parse_model(d, ch, verbose=True):  # model_dict, input_channels(3)
             else:
                 args = [c1, c2, *args[1:]]
 
-            if m in (BottleneckCSP, C1, C2, C2f, C3, C3TR, C3Ghost, C3x, RepC3, Blocks, VoVGSCSP, CSPStage,
+            if m in (BottleneckCSP, C1, C2, C2f, C3, C3TR, C3Ghost, C3x, RepC3, Blocks,
                      RepNCSPELAN4, RepNCSPELAN4_high, DFAL, DFAL2):
                 args.insert(2, n)  # number of repeats
                 n = 1
                              
-        elif m in {Dy_Sample, ContextGuidedBlock_Down, CA, EMA, MultiDilatelocalAttention, ACmix, deformable_LKA, LSKA,
-                   TripletAttention, DAttentionBaseline, BiLevelRoutingAttention}:
+        elif m in {Dy_Sample, MultiDilatelocalAttention}:
             c2 = ch[f]
             args = [c2, *args]
-
-        elif m is multiply:
-            c2 = ch[f[0]]
-        elif m is Zoom_cat:
-            c2 = sum(ch[x] for x in f)
-        elif m is Add:
-            c2 = ch[f[-1]]
-        elif m is ScalSeq:
-            c1 = [ch[x] for x in f]
-            c2 = make_divisible(args[0] * width, 8)
-            args = [c1, c2]
-        elif m is attention_model:
-            args = [ch[f[-1]]]
-
-
-        elif m in {vanillanet_5, vanillanet_6, vanillanet_7, vanillanet_8, vanillanet_9, vanillanet_10,
-                   repvit_m0_6, repvit_m0_9, repvit_m1_0, repvit_m1_1, repvit_m1_5, repvit_m2_3, LSKNet, LSKNET_Tiny,
-                   LSKNET_base, SwinTransformer, MobileNetV1, MobileNetV2, MobileNetV3, shufflenet_v1_x0_5,
-                   shufflenet_v1_x1_0, shufflenet_v1_x1_5, shufflenet_v1_x2_0, shufflenetv2, revcol_small, revcol_tiny,
-                   revcol_base, revcol_xlarge, revcol_large, efficient, efficientnet_v2, FasterNet,
-                   CSWin_64_12211_tiny_224, CSWin_64_24322_small_224, CSWin_96_24322_base_224,CSWin_144_24322_large_224,
-                   convnextv2_atto, convnextv2_large, convnextv2_base, convnextv2_tiny,
-                   transnext_micro, transnext_tiny, transnext_small, transnext_base,
-                   unireplknet_a, unireplknet_f, unireplknet_p, unireplknet_n, unireplknet_t, unireplknet_s,
-                   unireplknet_b, unireplknet_l, unireplknet_xl, efficientvit_backbone_b0, efficientvit_backbone_b1,
-                   efficientvit_backbone_b2, efficientvit_backbone_b3,
-                   EfficientViT_M0, EfficientViT_M1, EfficientViT_M2, EfficientViT_M3, EfficientViT_M4, EfficientViT_M5,
-                   Ghostnetv1, Ghostnetv2,
-                   efficientformerv2_s0, efficientformerv2_s1, efficientformerv2_l, efficientformerv2_s2,
-                   EMO_1M, EMO_2M, EMO_5M, EMO_6M, MobileNetV4ConvSmall, MobileNetV4ConvMedium, MobileNetV4ConvLarge, MobileNetV4HybridMedium, MobileNetV4HybridLarge}:
-            m = m(*args)
-            c2 = m.width_list
-            backbone = True
-        elif m is SDI:
-            args = [[ch[x] for x in f]]
         elif m in {Bi_FPN}:
             length = len([ch[x] for x in f])
             args = [length]

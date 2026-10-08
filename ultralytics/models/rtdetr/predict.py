@@ -46,6 +46,8 @@ class RTDETRPredictor(BasePredictor):
             (list[Results]): A list of Results objects containing the post-processed bounding boxes, confidence scores,
                 and class labels.
         """
+        if not isinstance(preds, (list, tuple)):  # single output of an exported model (TensorRT / ONNX)
+            preds = [preds, None]
         nd = preds[0].shape[-1]
         bboxes, scores = preds[0].split((4, nd - 4), dim=-1)
 

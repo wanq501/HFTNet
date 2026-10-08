@@ -1,6 +1,9 @@
-# BDFN aggregation (HFTNet, Section 3.4): DFAL, DFCS, DFBN and a pure-PyTorch DCNv3 (Eqs. 12-14).
-#   Agg(X)  = W2 Concat(Za, Zc, Zd), [Za, Zb] = Split(W1 X), Zc = DFCS(Zb), Zd = DFCS(Zc)
-#   DFCS(Z) = W5 Concat(W3 Z, DFBN(W4 Z))
+# BDFN aggregation (HFTNet, Section 3.4.1): DFAL2, DFBN and a pure-PyTorch DCNv3 (Eqs. 10-12).
+#   Agg(X)  = DFBN(W2 Concat(Za, Zb, Zc, Zd)), [Za, Zb] = Split(W1 X), Zc = W3 CSP(Zb), Zd = W4 CSP(Zc)
+#   DFBN(Z) = Z + W8 DCN(Z), with the batch-normalization scale of W8 initialized to zero
+# The split, the two CSP stages and the concatenation are the RepNCSPELAN4 block of YOLOv9.
+# DFAL and DFCS implement the earlier design and are kept for comparison.
+# The pure-PyTorch DCNv3 follows InternImage (Wang et al., CVPR 2023), https://github.com/OpenGVLab/InternImage.
 #   DFBN(Z) = Z + W6 DCN(Z)
 # DCN is DCNv3 (Wang et al., 2023): grouped sampling with learned offsets and softmax-normalized
 # modulation scalars, implemented with grid_sample so that no CUDA extension is required.
@@ -105,7 +108,7 @@ class DFCS(nn.Module):
 
 
 class DFAL(nn.Module):
-    """Deformable feature aggregation layer, the Agg operator of Eq. 12."""
+    """Deformable feature aggregation layer of the earlier design (DFCS stages with DFBN inside). HFTNet uses DFAL2."""
 
     def __init__(self, c1, c2, n=1, e=0.5, k=1, zero_init=False):
         """e: hidden-width ratio inside each DFCS; k: kernel size of W5 and W6; zero_init: start every DFBN as the
@@ -140,8 +143,8 @@ class SPDConv(nn.Module):
 
 
 class DFAL2(nn.Module):
-    """Aggregation node of BDFN, additive form: the CSP-ELAN aggregation of the baseline (split, two cascaded
-    stages, concatenation) followed by a zero-initialized deformable bottleneck DFBN(Z) = Z + W6 DCN(Z).
+    """Aggregation node of BDFN, the Agg operator of Eq. 10: the RepNCSPELAN4 aggregation of YOLOv9 (split, two
+    cascaded CSP stages, concatenation) followed by a zero-initialized deformable bottleneck DFBN(Z) = Z + W8 DCN(Z).
     At initialization the node equals the baseline aggregation; the deformable refinement is learned on top."""
 
     def __init__(self, c1, c2, n=3, g=8):

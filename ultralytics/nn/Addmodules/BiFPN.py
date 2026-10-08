@@ -1,3 +1,5 @@
+# Weighted fusion of the BDFN fusion nodes (Eq. 9), following the fast normalized fusion of BiFPN
+# (Tan et al., EfficientDet, CVPR 2020) with SiLU-activated weights.
 import torch.nn as nn
 import torch
 

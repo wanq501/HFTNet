@@ -26,6 +26,18 @@ warnings.filterwarnings('ignore')
 from ultralytics import RTDETR
 
 
+
+def load_model(path):
+    """RTDETR() accepts only .pt and .yaml files; TensorRT engines and ONNX models are loaded through the base Model
+    class with the RT-DETR task map, so they use the RT-DETR validator and predictor."""
+    from ultralytics import RTDETR
+    if str(path).endswith(('.pt', '.yaml', '.yml')):
+        return RTDETR(path)
+    from ultralytics.engine.model import Model
+    m = RTDETR.__new__(RTDETR)
+    Model.__init__(m, model=str(path), task='detect')
+    return m
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--weights', required=True)
@@ -35,7 +47,7 @@ def main():
     ap.add_argument('--device', default='0')
     ap.add_argument('--project', default='runs/detect')
     a = ap.parse_args()
-    RTDETR(a.weights).predict(source=a.source, imgsz=a.imgsz, conf=a.conf, device=a.device, save=True,
+    load_model(a.weights).predict(source=a.source, imgsz=a.imgsz, conf=a.conf, device=a.device, save=True,
                               project=a.project, name='HFTNet', exist_ok=True)
 
 

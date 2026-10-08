@@ -1,3 +1,4 @@
+# DySample (Liu et al., ICCV 2023), adapted from https://github.com/tiny-smart/dysample.
 import torch
 import torch.nn as nn
 import torch.nn.functional as F

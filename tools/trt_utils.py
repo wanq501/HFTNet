@@ -1,4 +1,5 @@
-"""TensorRT 8.x helpers for HFTNet: INT8 entropy calibration and engine building from an exported ONNX model.
+"""TensorRT 8.x helpers for HFTNet: engine building from an exported ONNX model, with the layer normalization layers
+kept in FP32 in FP16 and INT8 engines, and INT8 entropy calibration.
 Engines carry the Ultralytics metadata header, so they load with RTDETR('model.engine') for evaluation and inference.
 """
 import glob, json, os, time
@@ -85,7 +86,9 @@ def make_calibrator(trt, files, cache, imgsz):
     return EntropyCalibrator()
 
 
-def build_engine(onnx_path, out_path, precision, metadata, workspace_gb, calib_files, cache, imgsz):
+def build_engine(onnx_path, out_path, precision, metadata, workspace_gb, calib_files, cache, imgsz, fp32_types=('NORMALIZATION',)):
+    """fp32_types: TensorRT layer types kept in FP32 in FP16 and INT8 engines. Following standard
+    mixed-precision practice, layer normalization is kept in FP32 by default."""
     import tensorrt as trt
     if not trt.__version__.startswith('8.'):
         raise RuntimeError(f'TensorRT {trt.__version__} found; the Ultralytics 8.0 loader needs TensorRT 8.x (pip install tensorrt==8.6.1)')
@@ -108,6 +111,22 @@ def build_engine(onnx_path, out_path, precision, metadata, workspace_gb, calib_f
         config.int8_calibrator = make_calibrator(trt, calib_files, cache, imgsz)
     else:
         raise ValueError(precision)
+    if precision in ('fp16', 'int8') and fp32_types:
+        keep = {getattr(trt.LayerType, t.strip().upper()) for t in fp32_types if t.strip()}
+        floats = (trt.float32, trt.float16)
+        n = 0
+        for i in range(network.num_layers):
+            layer = network.get_layer(i)
+            if layer.type in keep and layer.num_outputs and all(layer.get_output(k).dtype in floats for k in range(layer.num_outputs)):
+                layer.precision = trt.float32
+                for k in range(layer.num_outputs):
+                    layer.set_output_type(k, trt.float32)
+                n += 1
+        config.set_flag(trt.BuilderFlag.OBEY_PRECISION_CONSTRAINTS)
+        print(f'  {n} of {network.num_layers} layers kept in FP32 ({", ".join(fp32_types)})', flush=True)
+        if n == 0:
+            print('  warning: no such layers found; export the ONNX model with opset 17 so that layer normalization stays a '
+                  'single operator', flush=True)
     t0 = time.time()
     serialized = builder.build_serialized_network(network, config)
     if serialized is None:

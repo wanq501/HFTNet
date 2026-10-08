@@ -1,3 +1,5 @@
+# Multi-scale dilated attention (MSDA) of DilateFormer (Jiao et al., IEEE TMM 2023),
+# adapted from https://github.com/JIAOJIAYUASD/dilateformer.
 from collections import OrderedDict
 import torch.nn as nn
 import torch.nn.functional as F

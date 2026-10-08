@@ -34,6 +34,9 @@ def main():
         if not d.get(split):
             continue
         files = images(d[split], root)
+        if not files:
+            print(f'{split}: no images found, skipped')
+            continue
         rel = [os.path.relpath(f, root) if os.path.isabs(f) else f for f in files]
         with open(os.path.join(a.out, f'{split}.txt'), 'w') as fh:
             fh.write('\n'.join(rel) + '\n')
